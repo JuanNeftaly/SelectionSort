@@ -1,63 +1,207 @@
 #include <iostream>
 using namespace std;
 
-// Definición de la estructura
-struct Persona
+struct Producto
 {
-    int id;
-    char nombre[50]; // Arreglo de caracteres para el nombre
+    char nombre[50];
+    int stock;
 };
+
+bool compararCadenas(char cadena1[], char cadena2[])
+{
+    int i = 0;
+    while (cadena1[i] != '\0' && cadena2[i] != '\0')
+    {
+        if (cadena1[i] != cadena2[i])
+        {
+            return false;
+        }
+        i++;
+    }
+    return (cadena1[i] == '\0' && cadena2[i] == '\0');
+}
+
+void ordenarPorStock(Producto productos[], int totalProductos)
+{
+    for (int i = 0; i < totalProductos - 1; i++)
+    {
+        int indiceMenor = i;
+        for (int j = i + 1; j < totalProductos; j++)
+        {
+            if (productos[j].stock < productos[indiceMenor].stock)
+            {
+                indiceMenor = j;
+            }
+        }
+        if (indiceMenor != i)
+        {
+            Producto temp = productos[i];
+            productos[i] = productos[indiceMenor];
+            productos[indiceMenor] = temp;
+        }
+    }
+    cout << "Productos ordenados por stock." << endl;
+    cout << "Presione Enter para continuar ";
+}
+
+void mostrarProductosReabastecimiento(Producto productos[], int totalProductos)
+{
+    cout << "Productos con stock menor a 10 unidades:" << endl;
+    for (int i = 0; i < totalProductos; i++)
+    {
+        if (productos[i].stock < 10)
+        {
+            cout << "Producto: " << productos[i].nombre << ", Stock: " << productos[i].stock << endl;
+        }
+    }
+    cout << "Presione Enter para continuar ";
+}
+
+void agregarProducto(Producto productos[], int &totalProductos)
+{
+    if (totalProductos < 100)
+    {
+        cout << "Ingrese el nombre del producto: ";
+        cin >> productos[totalProductos].nombre;
+        cout << "Ingrese la cantidad en stock: ";
+        cin >> productos[totalProductos].stock;
+        totalProductos++;
+        cout << "Producto agregado." << endl;
+        cout << "Presione Enter para continuar ";
+    }
+    else
+    {
+        cout << "No se puede agregar más productos. Capacidad maxima alcanzada." << endl;
+        cout << "Presione Enter para continuar ";
+    }
+}
+
+void eliminarProducto(Producto productos[], int &totalProductos)
+{
+    char nombre[50];
+    cout << "Ingrese el nombre del producto a eliminar: ";
+    cin >> nombre;
+
+    for (int i = 0; i < totalProductos; i++)
+    {
+        if (compararCadenas(productos[i].nombre, nombre))
+        {
+            for (int j = i; j < totalProductos - 1; j++)
+            {
+                productos[j] = productos[j + 1];
+            }
+            totalProductos--;
+            cout << "Producto eliminado." << endl;
+            return;
+        }
+    }
+    cout << "Producto no encontrado." << endl;
+    cout << "Presione Enter para continuar ";
+}
+
+void modificarProducto(Producto productos[], int totalProductos)
+{
+    char nombre[50];
+    cout << "Ingrese el nombre del producto a modificar: ";
+    cin >> nombre;
+
+    for (int i = 0; i < totalProductos; i++)
+    {
+        if (compararCadenas(productos[i].nombre, nombre))
+        {
+            cout << "Ingrese el nuevo stock para " << productos[i].nombre << ": ";
+            cin >> productos[i].stock;
+            cout << "Stock actualizado." << endl;
+            return;
+        }
+    }
+    cout << "Producto no encontrado." << endl;
+    cout << "Presione Enter para continuar ";
+}
+
+void esperarEnter()
+{
+    cin.ignore();
+    cin.get();
+}
+
+void mostrarProductos(Producto productos[], int totalProductos)
+{
+    cout << "Lista de productos:" << endl;
+    for (int i = 0; i < totalProductos; i++)
+    {
+        cout << "Producto: " << productos[i].nombre << ", Stock: " << productos[i].stock << endl;
+    }
+    cout << "Presione Enter para continuar ";
+    esperarEnter();
+}
+
+// Menú principal
+void mostrarMenu()
+{
+    cout << "------ MENU ------" << endl;
+    cout << "1. Ordenar productos por stock" << endl;
+    cout << "2. Mostrar productos con stock menor a 10" << endl;
+    cout << "3. Agregar producto" << endl;
+    cout << "4. Eliminar producto" << endl;
+    cout << "5. Modificar producto" << endl;
+    cout << "6. Mostrar todos los productos" << endl;
+    cout << "7. Salir" << endl;
+    cout << "------------------" << endl;
+    cout << "Seleccione una opcion: ";
+}
 
 int main()
 {
-    // Arreglo de estructuras
-    Persona personas[] = {
-        {10, "Cebollas"},
-        {1, "Papa"},
-        {9, "Tomate"},
-        {7, "YaNoSeQuePoner"},
-        {6, "Chipilin"},
-        {5, "Si"},
-        {3, "Remolacha"},
-        {1, "XD"}};
+    Producto productos[100] = {
+        {"Pizzas", 15},
+        {"Computadoras", 8},
+        {"Telefonos", 25},
+        {"Consolas", 5},
+        {"Videojuegos", 35}};
+    int totalProductos = 5;
+    int opcion;
 
-    // Variables para recorrer
-    int i, j, min = 0;
-    Persona aux;
-    int size = sizeof(personas) / sizeof(personas[0]);
-
-    // Mostrar el arreglo original
-    cout << "Arreglo original: \n";
-    for (i = 0; i < size; i++)
+    do
     {
-        cout << "ID: " << personas[i].id << ", Nombre: " << personas[i].nombre << endl;
-    }
-    cout << endl;
+        mostrarMenu();
+        cin >> opcion;
 
-    // Recorrer el arreglo para ordenar por ID
-    for (i = 0; i < size; i++)
-    {
-        min = i; // convertir el primero en el mínimo
-        for (j = i + 1; j < size; j++)
+        switch (opcion)
         {
-            if (personas[j].id < personas[min].id) // comparar IDs
-            {
-                min = j; // nuevo mínimo
-            }
+        case 1:
+            ordenarPorStock(productos, totalProductos);
+            esperarEnter();
+            break;
+        case 2:
+            mostrarProductosReabastecimiento(productos, totalProductos);
+            esperarEnter();
+            break;
+        case 3:
+            agregarProducto(productos, totalProductos);
+            esperarEnter();
+            break;
+        case 4:
+            eliminarProducto(productos, totalProductos);
+            esperarEnter();
+            break;
+        case 5:
+            modificarProducto(productos, totalProductos);
+            esperarEnter();
+            break;
+        case 6:
+            mostrarProductos(productos, totalProductos);
+            break;
+        case 7:
+            cout << "Saliendo." << endl;
+            break;
+        default:
+            cout << "Opcion no valida. Por favor, seleccione una opcion valida." << endl;
+            esperarEnter();
         }
 
-        // Intercambiar valores
-        aux = personas[i];           // aux guarda la estructura actual
-        personas[i] = personas[min]; // la estructura actual toma el valor de la mínima
-        personas[min] = aux;         // la mínima toma el valor de aux
-    }
-
-    // Arreglo ordenado
-    cout << "Arreglo ordenado por ID: \n";
-    for (i = 0; i < size; i++)
-    {
-        cout << "ID: " << personas[i].id << ", Nombre: " << personas[i].nombre << endl;
-    }
+        cout << endl;
+    } while (opcion != 7);
 
     return 0;
 }

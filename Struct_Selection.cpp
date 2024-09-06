@@ -7,7 +7,8 @@ struct Producto
     int stock;
 };
 
-bool compararCadenas(char cadena1[], char cadena2[])
+// verificar si los nombres son iguales
+bool compararNombre(char cadena1[], char cadena2[])
 {
     int i = 0;
     while (cadena1[i] != '\0' && cadena2[i] != '\0')
@@ -21,6 +22,7 @@ bool compararCadenas(char cadena1[], char cadena2[])
     return (cadena1[i] == '\0' && cadena2[i] == '\0');
 }
 
+// utilizando selection sort, ordenamos de menor a mayor
 void ordenarPorStock(Producto productos[], int totalProductos)
 {
     for (int i = 0; i < totalProductos - 1; i++)
@@ -40,23 +42,41 @@ void ordenarPorStock(Producto productos[], int totalProductos)
             productos[indiceMenor] = temp;
         }
     }
-    cout << "Productos ordenados por stock." << endl;
+    cout << endl;
+    cout << "PRODUCTOS ORDENADOS POR STOCK" << endl;
+    cout << endl;
     cout << "Presione Enter para continuar ";
 }
 
-void mostrarProductosReabastecimiento(Producto productos[], int totalProductos)
+// mostrar los productos con stock menor a 10
+void mostrarProductosBajoStock(Producto productos[], int totalProductos)
 {
-    cout << "Productos con stock menor a 10 unidades:" << endl;
-    for (int i = 0; i < totalProductos; i++)
+    int n;
+    cout << "Ingrese la cantidad de productos que desea ver: ";
+    cin >> n;
+
+    cout << "PRODUCTOS CON STOCK MENOR A 10 UNIDADES" << endl;
+    cout << endl;
+
+    int contador = 0;
+    for (int i = 0; i < totalProductos && contador < n; i++)
     {
         if (productos[i].stock < 10)
         {
             cout << "Producto: " << productos[i].nombre << ", Stock: " << productos[i].stock << endl;
+            contador++;
         }
     }
+
+    if (contador == 0)
+    {
+        cout << "No hay productos con stock menor a 10 unidades." << endl;
+    }
+
     cout << "Presione Enter para continuar ";
 }
 
+// agregar un producto
 void agregarProducto(Producto productos[], int &totalProductos)
 {
     if (totalProductos < 100)
@@ -66,6 +86,7 @@ void agregarProducto(Producto productos[], int &totalProductos)
         cout << "Ingrese la cantidad en stock: ";
         cin >> productos[totalProductos].stock;
         totalProductos++;
+        cout << endl;
         cout << "Producto agregado." << endl;
         cout << "Presione Enter para continuar ";
     }
@@ -76,6 +97,7 @@ void agregarProducto(Producto productos[], int &totalProductos)
     }
 }
 
+// eliminar un producto por su nombre
 void eliminarProducto(Producto productos[], int &totalProductos)
 {
     char nombre[50];
@@ -84,7 +106,7 @@ void eliminarProducto(Producto productos[], int &totalProductos)
 
     for (int i = 0; i < totalProductos; i++)
     {
-        if (compararCadenas(productos[i].nombre, nombre))
+        if (compararNombre(productos[i].nombre, nombre))
         {
             for (int j = i; j < totalProductos - 1; j++)
             {
@@ -95,10 +117,12 @@ void eliminarProducto(Producto productos[], int &totalProductos)
             return;
         }
     }
+    cout << endl;
     cout << "Producto no encontrado." << endl;
     cout << "Presione Enter para continuar ";
 }
 
+// modificar un producto en base al nonmbre
 void modificarProducto(Producto productos[], int totalProductos)
 {
     char nombre[50];
@@ -107,7 +131,7 @@ void modificarProducto(Producto productos[], int totalProductos)
 
     for (int i = 0; i < totalProductos; i++)
     {
-        if (compararCadenas(productos[i].nombre, nombre))
+        if (compararNombre(productos[i].nombre, nombre))
         {
             cout << "Ingrese el nuevo stock para " << productos[i].nombre << ": ";
             cin >> productos[i].stock;
@@ -115,23 +139,29 @@ void modificarProducto(Producto productos[], int totalProductos)
             return;
         }
     }
+    cout << endl;
     cout << "Producto no encontrado." << endl;
     cout << "Presione Enter para continuar ";
 }
 
+// para esperar la tecla enter del usuario
 void esperarEnter()
 {
     cin.ignore();
     cin.get();
+    system("cls");
 }
 
+// imprime todos los productos actuales
 void mostrarProductos(Producto productos[], int totalProductos)
 {
-    cout << "Lista de productos:" << endl;
+    cout << "LISTA DE PRODUCTOS: " << endl;
+    cout << endl;
     for (int i = 0; i < totalProductos; i++)
     {
         cout << "Producto: " << productos[i].nombre << ", Stock: " << productos[i].stock << endl;
     }
+    cout << endl;
     cout << "Presione Enter para continuar ";
     esperarEnter();
 }
@@ -174,7 +204,8 @@ int main()
             esperarEnter();
             break;
         case 2:
-            mostrarProductosReabastecimiento(productos, totalProductos);
+            ordenarPorStock(productos, totalProductos);
+            mostrarProductosBajoStock(productos, totalProductos);
             esperarEnter();
             break;
         case 3:
@@ -197,6 +228,8 @@ int main()
             break;
         default:
             cout << "Opcion no valida. Por favor, seleccione una opcion valida." << endl;
+            cin.clear();
+            cout << "Presione ENTER para continuar " << endl;
             esperarEnter();
         }
 
